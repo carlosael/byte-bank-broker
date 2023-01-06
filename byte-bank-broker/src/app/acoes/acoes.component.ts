@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { merge } from 'rxjs';
-import { switchMap, filter } from 'rxjs/operators';
+import { switchMap, filter, debounceTime } from 'rxjs/operators';
 import { AcoesService } from './acoes.service';
 
+const ESPERA_DIGITACAO = 300;
 @Component({
   selector: 'app-acoes',
   templateUrl: './acoes.component.html',
@@ -13,6 +14,7 @@ export class AcoesComponent {
   acoesInput = new FormControl();
   todasAcoes$ = this.acoesService.getAcoes();
   filtroPeloInput$ = this.acoesInput.valueChanges.pipe(
+    debounceTime(ESPERA_DIGITACAO),
     filter(
       (valorDigitado) => valorDigitado.length >= 3 || !valorDigitado.lenght
     ),
